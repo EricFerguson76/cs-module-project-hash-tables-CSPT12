@@ -82,8 +82,11 @@ class HashTable:
 
         Implement this.
         """
-        
+
         idx = self.hash_index(key)
+
+        if self.get_load_factor() > 0.7:
+            self.resize(self.capacity * 2)
 
         if self.buckets[idx] != None:
             node = self.buckets[idx]
@@ -118,18 +121,17 @@ class HashTable:
         if node is None:
             print('Warning: Key not found.')
             return None
-        else:  
+        else:
             prev = None
             while node.key != key and node.next is not None:
                 prev = node
                 node = node.next
-            
+
             if node.key == key:
                 if prev is None:
                     self.buckets[idx] = node.next
                 else:
                     prev.next = node.next
-
 
     def get(self, key):
         """
@@ -156,7 +158,17 @@ class HashTable:
 
         Implement this.
         """
-        
+        old_storage = self.buckets
+        self.capacity = new_capacity
+        self.buckets = [None] * self.capacity
+
+        for bucket in old_storage:
+            if bucket is not None:
+                current = bucket
+                while current is not None:
+                    self.put(current.key, current.value)
+
+                    current = current.next
 
 
 if __name__ == "__main__":
